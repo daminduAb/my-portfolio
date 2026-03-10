@@ -8,11 +8,11 @@ const categories = [
     {
         name: "Languages",
         skills: [
-            { name: "Go", slug: "go" },
+           { name: "Spring Boot", slug: "spring" },
             { name: "Python", slug: "python" },
             { name: "TypeScript", slug: "typescript" },
             { name: "JavaScript", slug: "javascript" },
-            { name: "C++", slug: "cplusplus" },
+            { name: "C#", slug: "dotnet" },
         ]
     },
     {
@@ -32,7 +32,7 @@ const categories = [
             { name: "Node.js", slug: "nodedotjs" },
             { name: "PostgreSQL", slug: "postgresql" },
             { name: "MongoDB", slug: "mongodb" },
-            { name: "Redis", slug: "redis" },
+            { name: "Php", slug: "php" },
             { name: "FireBase", slug: "firebase" },
         ]
     },
@@ -45,14 +45,14 @@ const categories = [
             { name: "Git", slug: "git" },
             { name: "GitHub", slug: "github" },
             { name: "Linux", slug: "linux" },
-            { name: "Nginx", slug: "nginx" },
+            
         ]
     },
     {
         name: "AI & ML",
         skills: [
             { name: "Hugging Face", slug: "huggingface" },
-            { name: "PyTorch", slug: "pytorch" },
+           
             { name: "Pandas", slug: "pandas" },
         ]
     }

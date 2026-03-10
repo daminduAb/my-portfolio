@@ -1,20 +1,89 @@
 "use client";
 
+
+const images = [
+  "/casua.jpg",
+  "/casual2.jpg",
+  "/casual3.jpg",
+  "/casual4.jpg",
+  "/casual5.jpg",
+  "/casual6.jpg",
+  "/casual7.jpg",
+  "/casual8.jpg",
+  "/casual9.jpg",
+  "/casual10.jpg",
+]
+
 import Image from "next/image";
-import { Github, Linkedin, Youtube, Calendar, Bot, User, QrCode, X, ArrowRight, Music, Pause } from "lucide-react";
+import {
+  Github,
+  Linkedin,
+  Youtube,
+  User,
+  QrCode,
+  X,
+  Music,
+  Pause
+} from "lucide-react";
+
 import { FaXTwitter } from "react-icons/fa6";
+
 import { ExperienceItem } from "./components/ExperienceItem";
 import { GithubGraph } from "./components/GithubGraph";
 import { TechStack } from "./components/TechStack";
-import { useState, useEffect, useMemo, useRef } from "react";
-import { useTheme } from "next-themes";
-import { QRCodeSVG } from "qrcode.react";
-import { ThemeToggle } from "./components/ThemeToggle";
-import { motion, AnimatePresence } from "framer-motion";
-
 import { NeuralNetworkSim } from "./components/NeuralNetworkSim";
 
-import { getMarkdownContent } from "./data/content";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { useTheme } from "next-themes";
+
+import { QRCodeSVG } from "qrcode.react";
+
+import { ThemeToggle } from "./components/ThemeToggle";
+
+import { motion, AnimatePresence } from "framer-motion";
+
+import {
+  FiGithub,
+  FiExternalLink,
+  FiShoppingCart,
+  FiX,
+  FiMaximize2
+} from "react-icons/fi";
+
+import {
+  SiReact,
+  SiSolidity,
+  SiNextdotjs,
+  SiMongodb,
+  SiTailwindcss,
+  SiNodedotjs,
+  SiEthereum,
+  SiSupabase,
+  SiStripe,
+  SiMysql
+} from "react-icons/si";
+
+// Define types
+interface Project {
+  id: number;
+  title: string;
+  shortDesc: string;
+  fullDesc: string;
+  tech: string[];
+  techIcons: Record<string, React.ReactNode>;
+  category: string;
+  gradient: string;
+  icon: React.ReactNode;
+  mediaType: "video" | "image";
+  mediaUrl?: string;
+  thumbnail?: string;
+  images?: string[];
+  stats: Record<string, string>;
+  links: {
+    github?: string;
+    demo?: string;
+  };
+}
 
 const DiscordIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -25,9 +94,14 @@ const DiscordIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export default function Home() {
   const [time, setTime] = useState<string>("");
   const [showQR, setShowQR] = useState(false);
-  const [mode, setMode] = useState<"human" | "agent">("human");
-
+  const [mode, setMode] = useState<"profile" | "projects">("profile");
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [hoveredProject, setHoveredProject] = useState<number | null>(null);
   const { setTheme, resolvedTheme } = useTheme();
+  const [showEasterEgg, setShowEasterEgg] = useState(false);
+  const [isLofiPlaying, setIsLofiPlaying] = useState(false);
+  const [lofiVolume, setLofiVolume] = useState(1);
+  const lofiRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const updateTime = () => {
@@ -48,13 +122,6 @@ export default function Home() {
 
     return () => clearInterval(timer);
   }, []);
-
-  const markdownContent = getMarkdownContent(time);
-
-  const [showEasterEgg, setShowEasterEgg] = useState(false);
-  const [isLofiPlaying, setIsLofiPlaying] = useState(false);
-  const [lofiVolume, setLofiVolume] = useState(1);
-  const lofiRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (lofiRef.current) {
@@ -94,6 +161,121 @@ export default function Home() {
       delay: Math.random() * 5,
     }));
   }, []);
+
+  // Projects data
+  const projectss: Project[] = [
+    {
+      id: 1,
+      title: "Blockchain Voting System",
+      shortDesc: "Secure decentralized voting platform",
+      fullDesc: "A revolutionary decentralized voting system ensuring transparency and immutability. Users authenticate via MetaMask, with each vote permanently recorded on the Ethereum blockchain. Features include real-time vote tracking, fraud detection, and verifiable results.",
+      tech: ["React", "Solidity", "Tailwind", "Ethereum"],
+      techIcons: {
+        React: <SiReact className="text-blue-400" />,
+        Solidity: <SiSolidity className="text-gray-600 dark:text-gray-400" />,
+        Tailwind: <SiTailwindcss className="text-cyan-500" />,
+        Ethereum: <SiEthereum className="text-blue-600" />
+      },
+      category: "blockchain",
+      gradient: "",
+      icon: <FiShoppingCart className="w-6 h-6" />,
+      mediaType: "video",
+      mediaUrl: "voting-system-demo.mp4",
+      thumbnail: "casual2.jpg",
+      stats: {
+        users: "1.2K+",
+        votes: "5.4K+",
+        uptime: "99.9%"
+      },
+      links: {
+        github: "https://github.com/prasindu/myDAPP.git",
+        demo: "https://my-dapp-prasindus-projects-8a9c175b.vercel.app/"
+      }
+    },
+    {
+      id: 2,
+      title: "E-Commerce Platform",
+      shortDesc: "Full-stack shopping platform",
+      fullDesc: "A comprehensive e-commerce solution with advanced features including JWT authentication, real-time inventory management, secure payment processing with Stripe, and an intuitive admin dashboard with analytics. Supports multiple vendors and automated order tracking.",
+      tech: ["Next.js", "Supabase", "Tailwind", "Stripe"],
+      techIcons: {
+        "Next.js": <SiNextdotjs className="text-black dark:text-white" />,
+        "Supabase": <SiSupabase className="text-green-500" />,
+        "Tailwind": <SiTailwindcss className="text-cyan-500" />,
+        "Stripe": <SiStripe className="text-orange-500" />
+      },
+      category: "ecommerce",
+      gradient: "",
+      icon: <FiShoppingCart className="w-6 h-6" />,
+      mediaType: "image",
+      images: [
+        "/1.png",
+        "/3.png",
+        "/4.png"
+      ],
+      stats: {
+        products: "500+",
+        orders: "2.3K+",
+        revenue: "$45K+"
+      },
+      links: {
+        github: "https://github.com/daminduAb/AS-techno.git",
+        demo: "https://as-techno.vercel.app/"
+      }
+    },
+    {
+      id: 3,
+      title: "Eco Green Platform",
+      shortDesc: "Sustainability awareness system",
+      fullDesc: "An innovative platform promoting environmental consciousness through gamification. Users earn rewards for eco-friendly actions, track their carbon footprint, and participate in community challenges. Features AI-powered recommendations for sustainable living.",
+      tech: ["React", "Node.js", "MongoDB","Mysql"],
+      techIcons: {
+        "React": <SiReact className="text-blue-400" />,
+        "Node.js": <SiNodedotjs className="text-green-600" />,
+        "MongoDB": <SiMongodb className="text-green-500" />,
+        "Mysql": <SiMysql className="text-blue-600" />
+      },
+      category: "sustainability",
+      gradient: "",
+      icon: <FiShoppingCart className="w-6 h-6" />,
+      mediaType: "video",
+      mediaUrl: "/ecogreen.mp4",
+      thumbnail: "/casual2.jpg",
+      stats: {
+        users: "3.2K+",
+        actions: "15K+",
+        trees: "1.2K+"
+      },
+      links: {
+        github: " https://lnkd.in/gY3P_ZbT",
+        demo: "https://lnkd.in/g87efjCQ"
+      }
+    }
+  ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        type: "spring",
+        damping: 12,
+        stiffness: 100
+      }
+    }
+  };
 
   return (
     <div className={`relative flex min-h-screen flex-col items-center bg-white dark:bg-black px-3 pt-16 text-black dark:text-white selection:bg-black dark:selection:bg-white selection:text-white dark:selection:text-black pb-32 sm:px-4 sm:pt-24 sm:pb-40 overflow-x-hidden transition-colors duration-300`}>
@@ -139,33 +321,166 @@ export default function Home() {
           </>
         )}
       </AnimatePresence>
+      
       {/* Theme Toggle in Top Right */}
       <div className="fixed top-6 right-6 z-50">
         <ThemeToggle />
       </div>
 
       <AnimatePresence mode="wait">
-        {mode === "agent" ? (
-          /* Agent Mode - Markdown View */
+        {mode === "projects" ? (
+          /* Projects View */
           <motion.main
-            key="agent"
+            key="projects"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
-            className="flex w-full max-w-2xl flex-col items-start text-left px-4 sm:px-0"
+            className="flex w-full max-w-6xl flex-col items-start text-left px-4 sm:px-0 mx-auto"
           >
-            <pre
-              className="w-full whitespace-pre-wrap font-mono text-sm leading-relaxed text-black dark:text-gray-300 selection:bg-black dark:selection:bg-white selection:text-white dark:selection:text-black antialiased"
-              style={{ fontFamily: '"Courier New", Courier, "Lucida Sans Typewriter", "Lucida Console", monospace' }}
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 w-full"
             >
-              {markdownContent}
-            </pre>
+              {projectss.map((project) => (
+                <motion.div
+                  key={project.id}
+                  variants={itemVariants}
+                  whileHover={{ 
+                    y: -8,
+                    transition: { type: "spring", stiffness: 300 }
+                  }}
+                  onHoverStart={() => setHoveredProject(project.id)}
+                  onHoverEnd={() => setHoveredProject(null)}
+                  className="group relative rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50 backdrop-blur-sm overflow-hidden cursor-pointer"
+                  onClick={() => setSelectedProject(project)}
+                >
+                  {/* Gradient Overlay */}
+                  <motion.div 
+                    className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
+                  />
+                  
+                  {/* Media Thumbnail */}
+                  <div className="relative h-40 bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
+                    {project.mediaType === "video" ? (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <FiShoppingCart className="w-12 h-12 text-white drop-shadow-lg opacity-50 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center gap-2">
+                        {project.images?.map((_, idx) => (
+                          <div key={idx} className="w-2 h-2 rounded-full bg-white/50" />
+                        ))}
+                      </div>
+                    )}
+                    
+                    {/* Category Badge */}
+                    <motion.div 
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm text-xs font-medium flex items-center gap-1"
+                    >
+                      {project.icon}
+                      <span className="capitalize">{project.category}</span>
+                    </motion.div>
+
+                    {/* Expand Icon */}
+                    <motion.div 
+                      initial={{ scale: 0 }}
+                      animate={{ scale: hoveredProject === project.id ? 1 : 0 }}
+                      className="absolute top-3 right-3 p-2 rounded-full bg-black/50 backdrop-blur-sm text-white"
+                    >
+                      <FiMaximize2 className="w-4 h-4" />
+                    </motion.div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="text-xl font-semibold bg-gradient-to-r from-zinc-900 to-zinc-600 dark:from-white dark:to-zinc-400 bg-clip-text text-transparent">
+                        {project.title}
+                      </h3>
+                    </div>
+
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                      {project.shortDesc}
+                    </p>
+
+                    {/* Tech Stack with Icons */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.tech.map((tech) => (
+                        <motion.div
+                          key={tech}
+                          whileHover={{ scale: 1.1, rotate: 5 }}
+                          className="flex items-center gap-1 px-2 py-1 rounded-full bg-zinc-100 dark:bg-zinc-700 text-xs"
+                        >
+                          <span className="text-sm">{project.techIcons[tech]}</span>
+                          <span>{tech}</span>
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-3 gap-2 mb-4 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50">
+                      {Object.entries(project.stats).map(([key, value]) => (
+                        <div key={key} className="text-center">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 capitalize">{key}</div>
+                          <div className="text-sm font-semibold">{value}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Links */}
+                    <div className="flex gap-3">
+                      {project.links.github && (
+                        <motion.a
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          href={project.links.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-sm px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <FiGithub className="w-4 h-4" />
+                          <span>Code</span>
+                        </motion.a>
+                      )}
+                      {project.links.demo && (
+                        <motion.a
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          href={project.links.demo}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-sm px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <FiExternalLink className="w-4 h-4" />
+                          <span>Demo</span>
+                        </motion.a>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Animated Border */}
+                  <motion.div 
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-0 group-hover:opacity-100"
+                    style={{ color: project.gradient.includes('purple') ? '#8b5cf6' : '#10b981' }}
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: hoveredProject === project.id ? 1 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
           </motion.main>
         ) : (
           /* Human Mode - Original View */
           <motion.main
-            key="human"
+            key="profile"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -179,7 +494,7 @@ export default function Home() {
               aria-label="Toggle Aura Mode"
             >
               <Image
-                src="/me.png" // User's photo
+                src="/my.png"
                 alt="Profile"
                 fill
                 className={`object-contain transition-all duration-700 ${showEasterEgg ? 'grayscale-0 scale-105' : 'grayscale'}`}
@@ -193,12 +508,12 @@ export default function Home() {
 
             {/* Hero Text */}
             <h1 className="mb-4 text-5xl font-bold tracking-tight sm:text-7xl">
-              Aditya Patil
+              Damindu Abeygunasekara
             </h1>
 
-            {/* Phonetic Pronunciation (Aesthetic touch often found in minimal portfolios) */}
+            {/* Phonetic Pronunciation */}
             <div className="mb-8 flex flex-wrap items-center justify-center gap-2 text-xs text-gray-400 dark:text-gray-500 sm:text-sm">
-              <span>/əˈdɪtjə pɑːˈtiːl/</span>
+              <span>/dæmɪnduː əbeɪɡunəsɛkərə/</span>
               <span className="text-gray-300 dark:text-gray-700">•</span>
               <span>noun</span>
               <span className="text-gray-300 dark:text-gray-700">•</span>
@@ -245,10 +560,13 @@ export default function Home() {
 
             <div className="w-full space-y-4 text-left text-base leading-relaxed text-gray-600 dark:text-gray-400 sm:text-lg md:text-xl">
               <p>
-                a full-stack developer and <a href="https://en.wikipedia.org/wiki/Product_design" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-black dark:hover:text-white transition-colors">product builder</a> with deep experience across engineering, product strategy, and user-centric design.
+                I am a Computer Science undergraduate at the University of Kelaniya with a strong interest in
+                full-stack development, blockchain technologies, and artificial intelligence.
               </p>
               <p>
-                a <a href="https://en.wikipedia.org/wiki/Polymath" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-black dark:hover:text-white transition-colors">polymath</a> who bridges technical architecture with business outcomes to create impactful, scalable solutions.
+                I enjoy building real-world software solutions such as decentralized applications,
+                AI systems, and modern web platforms. My goal is to become a skilled software engineer
+                and contribute to innovative technology projects.
               </p>
             </div>
 
@@ -261,64 +579,47 @@ export default function Home() {
               </h2>
               <div className="space-y-12">
                 <ExperienceItem
-                  title="Entrepreneur First"
-                  role="Founder in Residence, Bengaluru"
+                  title="Ballerina Competition – Finalist"
+                  role="Member of team Axionic"
                   collapsible={true}
                   link="https://www.joinef.com/"
                 >
                   <div className="space-y-2">
-                    <p>As a Founder in Residence at Entrepreneurs First (EF), a premier global talent investor and startup accelerator known for backing exceptional individuals to build transformative companies from scratch, I am fully immersed in designing and developing cutting-edge Agentic AI systems.</p>
-                    <p>Actively building autonomous, goal-driven AI agents that shift from suggestion-based tools to proactive execution, enabling seamless human-AI collaboration and redefining task automation, decision-making, and operations.</p>
-                    <p>Driving a bold vision for the future of computing: making traditional web browsing obsolete, turning personal data into the primary interface (your "homepage"), and empowering agentic systems to independently handle complex responsibilities.</p>
-                    <p>Hustling full-time in a high-intensity, ambition-fueled environment surrounded by world-class cofounders, mentors, and resources - leveraging EF's structured support (including coaching, community, and potential funding pathways) to explore, validate, and iterate ideas at pace.</p>
-                    <p>Positioning myself at the forefront of a paradigm shift in AI, tackling hard technical and conceptual challenges to create meaningful, scalable impact in the emerging agentic era.</p>
-                    <p>This role highlights my entrepreneurial drive, deep technical expertise in AI systems, and commitment to pioneering the next wave of intelligent, autonomous technology.</p>
+                    <p>Participated in a national-level ballerina competition</p>
+                    <p>Selected as a finalist among many competitors</p>
+                    <p>Demonstrated dedication, creativity, and performance skills</p>
                   </div>
                 </ExperienceItem>
 
                 <ExperienceItem
-                  title="Google Summer of Code 2025"
-                  role="Emory University School of Medicine, Atlanta, USA"
+                  title="Rotaract Club of University of Kelaniya"
+                  role="PR Coordinator"
                   collapsible={true}
                   link="https://minimalistbook.com/gsoc-final-report-2025/"
                 >
                   <div className="space-y-2">
-                    <p>Designed and developed a comprehensive system for managing Access Control List (ACL) permissions across multiple Linux file system servers, including NFS and BeeGFS, demonstrating expertise in large-scale distributed systems and secure file management.</p>
-                    <p>Built a robust backend capable of processing millions of permission change requests, showcasing proficiency in high-performance computing and scalability.</p>
-                    <p>Implemented two Linux systemd daemons communicating via Unix sockets: one for gRPC-based backend interactions and another for executing ACL changes, highlighting skills in daemon development, inter-process communication, and system-level programming.</p>
-                    <p>Created a user-friendly Next.js frontend enabling secure login, backend communication, and scheduling of permission requests, illustrating full-stack development capabilities and focus on intuitive user experiences.</p>
+                    <p>Managed social media communication and public relations</p> 
+                    <p>Promoted club events and community service projects</p>
+                    <p>Designed digital promotional content</p>
+                    <p>Coordinated communication between members and external partners</p>
                   </div>
                 </ExperienceItem>
 
                 <ExperienceItem
-                  title="Professional Freelancer (Technical GTM)"
-                  role="Technical Writer, Tel Aviv, Israel"
-                  collapsible={true}
-                  link="https://www.upwork.com/freelancers/~0172a072394ece49bb?viewMode=1"
-                >
-                  <div className="space-y-2">
-                    <p>Authored comprehensive, highly technical documentation (50+ pages) for a Software Composition Analysis (SCA) tool, including detailed guides on advanced features such as reachability analysis - focusing on identifying truly exploitable vulnerabilities in open-source dependencies to reduce noise and prioritize remediation in secure software development lifecycles.</p>
-                    <p>Ghostwrote in-depth content on Reachability Analysis for the CTO of a security company, explaining how it enhances SCA by determining whether detected vulnerabilities are actually reachable and exploitable in the application's codebase - delivering clear, authoritative thought leadership material suitable for blogs, whitepapers, or technical marketing.</p>
-                    <p>Deployed and configured Flipt (an open-source, Git-native feature flagging platform) on cloud infrastructure to support video production workflows for a feature flagging provider; troubleshot and resolved operational issues to ensure reliable, production-ready performance in a dynamic environment.</p>
-                    <p>Developed custom scraping tools for a proxy provider targeting real estate platforms, enabling efficient data extraction while adhering to technical and ethical constraints; rapidly produced high-quality articles and technical write-ups on the tools, scraping methodologies, and platform integrations to support knowledge sharing and client deliverables.</p>
-                  </div>
-                </ExperienceItem>
-
-                <ExperienceItem
-                  title="Engineering Intern"
-                  role="Athena Consulting Ltd. Dubai"
-                  collapsible={true}
-                >
-                  <div className="space-y-2">
-                    <p>Led the complete system design and deployment architecture for Eumlet, a UAE-based B2B Web3 payments and financial platform (built on Next.js), on AWS infrastructure. Configured Debian EC2 instances, Application Load Balancer (ALB), and NGINX reverse proxy under senior guidance - ensuring high availability, scalability, and secure handling of financial transactions in a regulated environment.</p>
-                    <p>Engineered automated CI/CD pipelines using GitHub Actions for seamless build, test, and deployment workflows, with direct integration and manual orchestration to EC2 targets - demonstrating strong expertise in modern DevOps practices, infrastructure as code principles, and zero-downtime deployments for production fintech applications.</p>
-                    <p>Managed a team of 4 developers while simultaneously supporting two high-value clients: Lunarspace and Concordium (a privacy-focused Layer-1 blockchain platform) - balancing tight deadlines, client expectations, and resource constraints in a fast-paced environment. Authored comprehensive legal and technical developer handbooks to standardize onboarding, compliance, and best practices for new recruits.</p>
-                    <p>Collaborated remotely with BGTrade (China-based financial platform team) on global security audits and production deployments of sensitive financial systems - coordinating across time zones and cultures to identify vulnerabilities, implement hardening measures, and ensure secure, compliant rollouts in cross-border fintech ecosystems.</p>
-                  </div>
-                </ExperienceItem>
+  title="University Hackathons & Tech Events"
+  role="Participant & Organizer"
+  collapsible={true}
+  link="https://your-university-profile-or-events-link.com"
+>
+  <div className="space-y-2">
+    <p>Participated in multiple university-level hackathons, collaborating in diverse teams to design, prototype, and deploy innovative software and hardware solutions under tight deadlines.</p>
+    <p>Organized and led tech workshops and events on topics like AI, Web3, and Full-Stack Development, enabling fellow students to learn hands-on skills and apply them in real projects.</p>
+    <p>Worked on creative projects including AI-powered apps, blockchain voting systems, and interactive web experiences, gaining practical exposure to Next.js, React, Solidity, Tailwind CSS, and other modern technologies.</p>
+    <p>Actively contributed to community knowledge sharing by writing technical tutorials, conducting demo sessions, and mentoring new participants in hackathons and coding competitions.</p>
+  </div>
+</ExperienceItem>
               </div>
             </div>
-
 
             {/* In Between These Experiences Section */}
             <div className="mb-16 w-full text-left">
@@ -327,29 +628,38 @@ export default function Home() {
               </h2>
               <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8">
                 <ExperienceItem
-                  title="The Product Building Journey"
+                  title="Beyond Academics & Technical Work"
                   role=""
                   collapsible={true}
                 >
                   <div className="space-y-4">
-                    <p>I've been building and experimenting on the product side for a long time. Each previous product always feels naive in hindsight, but looking back, I can see they were incrementally better, each iteration teaching me something new about users, infrastructure, and what it takes to build something people actually want.</p>
+                    <p>
+                      Outside of my academic and technical work, I enjoy exploring creative and collaborative activities that help me develop new perspectives and skills. Being involved in different areas allows me to stay balanced, creative, and connected with people.
+                    </p>
 
-                    <p>It started with <span className="font-medium">MetaWiper</span> during my sophomore year, a tool that cleaned image metadata. No one would use it, but I was proud. It was my first real attempt at shipping something complete.</p>
+                    <p>
+                      I actively participate in <span className="font-medium">sports</span>, which helps me maintain discipline, teamwork, and a competitive mindset. Sports have always been an important part of my lifestyle and help me stay energetic and focused.
+                    </p>
 
-                    <p>Next came <span className="font-medium">Stockic</span>, a news app where I spent months doing serious infrastructure work. This was where I learned to build systems that could scale, not just features that looked good.</p>
+                    <p>
+                      I also enjoy <span className="font-medium">video editing and photo editing</span>, where I experiment with visual storytelling, creative design, and digital media production. These skills allow me to create engaging content for events, social media, and personal projects.
+                    </p>
 
-                    <p>Then I worked on <span className="font-medium">Gloss Card</span>, and for the first time, a customer actually wanted to buy it for their product. That validation, knowing someone saw enough value to pay, was a turning point.</p>
+                    <p>
+                      Organizing <span className="font-medium">music events and university events</span> has been another meaningful experience. Working with teams to plan and manage events has helped me develop strong communication, leadership, and coordination skills.
+                    </p>
 
-                    <p>After that, I built <span className="font-medium">NeuraLeap</span>, where I had the most meaningful user interactions yet, HRs from established firms. I worked on data pipelines capable of handling 50 million LinkedIn profiles and processing them with AI. The scale was different, the stakes were higher, and the technical challenges forced me to level up.</p>
+                    <p>
+                      These experiences outside the classroom have shaped my ability to work with diverse teams, manage responsibilities, and approach challenges with creativity and adaptability.
+                    </p>
 
-                    <p>Most recently, I worked on <span className="font-medium">Meteor</span>, an AI SEO toolkit at Entrepreneurs First. This time, my product was being used by 6 YC-backed companies. Real users. Real traction. Real feedback loops.</p>
-
-                    <p className="font-medium text-black">So yes, hard work and consistency pay off. Each product was a step forward, even when it didn't feel like it at the time.</p>
+                    <p className="font-medium text-black">
+                      I believe that combining technical knowledge with creativity and teamwork leads to building better ideas, stronger communities, and more meaningful projects.
+                    </p>
                   </div>
                 </ExperienceItem>
               </div>
             </div>
-
 
             {/* Education Section */}
             <div className="mb-16 w-full text-left">
@@ -358,58 +668,20 @@ export default function Home() {
               </h2>
               <div className="space-y-12">
                 <ExperienceItem
-                  title="National Institute of Technology Hamirpur"
-                  role="Electrical Engineering"
+                  title="University of Kelaniya"
+                  role="Bachelor of Science (BSc) in Computer Science (UG)"
                 >
-                  <p>2022 - Surviving</p>
+                  <p>Data Science</p>
                 </ExperienceItem>
               </div>
             </div>
 
-            {/* Contributions Section */}
+            {/* GitHub Contributions Section */}
             <div className="mb-16 w-full text-left">
               <h2 className="mb-6 text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
                 GitHub Contributions
               </h2>
               <GithubGraph />
-            </div>
-
-            {/* Research Publications Section */}
-            <div className="mb-16 w-full text-left">
-              <h2 className="mb-6 text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
-                Research Publications
-              </h2>
-              <div className="space-y-12">
-                <ExperienceItem
-                  title="Cross-Compatible Encryption Adapter for Securing Legacy Modbus Devices"
-                  role=""
-                  collapsible={true}
-                  collapsedHeight="max-h-40"
-                >
-                  <div className="space-y-4">
-                    <div className="space-y-1">
-                      <p className="text-sm text-gray-400 dark:text-gray-500 font-medium">
-                        2025 17th International Conference on COMmunication Systems and NETworks (COMSNETS)
-                      </p>
-                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-                        <p className="text-gray-600 dark:text-gray-400">Authors: Aditya Patil; T. S. Sreeram</p>
-                        <a
-                          href="https://doi.org/10.1109/COMSNETS63942.2025.10885597"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center text-xs font-medium text-black dark:text-white underline underline-offset-4 hover:text-gray-600 dark:hover:text-gray-300"
-                        >
-                          View Publication
-                        </a>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs uppercase tracking-wider text-gray-400 dark:text-gray-500 font-bold">Abstract</p>
-                      <p className="text-gray-600 dark:text-gray-400">Supervisory Control and Data Acquisition systems are the backbone of managing critical infrastructure in modern industrial control systems, spanning sectors from power generation to logistics. However, these systems face significant challenges due to threats from malicious actors. The Modbus protocol, despite its known lack of security features, is still used in many industries managing critical infrastructure due to the high cost of replacing existing systems. As a result, these legacy systems remain vulnerable to potentially damaging threats. This paper proposes an adapter device for enhancing the security of the Modbus protocol without replacing devices in legacy systems. The proposed adapter is cost-efficient, provides cross-platform support, and is easy to install, update, and maintain.</p>
-                    </div>
-                  </div>
-                </ExperienceItem>
-              </div>
             </div>
 
             {/* Tech Stack Section */}
@@ -423,97 +695,24 @@ export default function Home() {
               <TechStack />
             </div>
 
-            {/* Recommendations by Clients Section */}
-            <div className="mb-16 w-full text-left">
-              <h2 className="mb-6 text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
-                Recommendations by Clients
-              </h2>
-              <div className="space-y-8">
-                {/* Roy Feldman Recommendation */}
-                <div className="group border-l-2 border-gray-200 dark:border-gray-800 pl-6 transition-all hover:border-black dark:hover:border-white">
-                  <div className="mb-3">
-                    <a
-                      href="https://www.linkedin.com/in/royhax/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-base font-semibold text-black dark:text-white underline underline-offset-4 decoration-gray-300 dark:decoration-gray-700 hover:decoration-black dark:hover:decoration-white transition-colors"
-                    >
-                      Roy Feldman
-                    </a>
-                  </div>
-                  <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
-                    I've had the privilege to work with Aditya on several highly technical cybersecurity R&D projects involving design and implementation of defensive network components in Golang, network protocol research and analysis. He is a bright young engineer, extremely talented in hacking and cybersecurity, with a natural curiosity and passion for hacking, and a gift understanding how systems work, how to design and break them. I am certain that he will succeed in any endeavor he puts his mind to, in the realms of cybersecurity, engineering and beyond! :)
-                  </p>
-                </div>
-
-                {/* Tom Granot Recommendation */}
-                <div className="group border-l-2 border-gray-200 dark:border-gray-800 pl-6 transition-all hover:border-black dark:hover:border-white">
-                  <div className="mb-3">
-                    <a
-                      href="https://www.linkedin.com/in/tomgranot/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-base font-semibold text-black dark:text-white underline underline-offset-4 decoration-gray-300 dark:decoration-gray-700 hover:decoration-black dark:hover:decoration-white transition-colors"
-                    >
-                      Tom Granot
-                    </a>
-                  </div>
-                  <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
-                    It's not often that you get to talk to a person who is not only hungry for mentorship, but comes out of the gate with the attitude that enables him to learn so, so quickly on his feet.
-                    <br /><br />
-                    Aditya did research for highly technical content for me and independently navigated difficult situations without a lot of guidance. If you're looking for someone to research a technical topic for your content work, Aditya is disciplined, thorough and insistent on understanding things in depth before giving a final output.
-                    <br /><br />
-                    Keep on keeping on brother!
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Videos Section */}
-            <div className="mb-16 w-full text-left">
-              <h2 className="mb-6 text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
-                Explainer Videos
-              </h2>
-              <p className="mb-8 text-lg text-gray-600 dark:text-gray-400">
-                Here is how I explain complex systems on my {" "}
-                <a
-                  href="https://www.youtube.com/@theracecondition"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-black dark:text-white underline underline-offset-4 hover:text-gray-600 dark:hover:text-gray-300"
-                >
-                  YouTube Channel
-                </a>
-              </p>
-              <div className="aspect-video w-full overflow-hidden rounded-xl border border-gray-100 dark:border-gray-900 bg-gray-50 dark:bg-gray-950 shadow-sm transition-all hover:shadow-md grayscale hover:grayscale-0 duration-500">
-                <iframe
-                  src="https://www.youtube.com/embed/m84tBP_4DWE"
-                  title="Explaining Complex Systems"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="h-full w-full"
-                />
-              </div>
-            </div>
-
             {/* Writings & Blogs Section */}
             <div className="mb-16 w-full text-left">
-              <h2 className="mb-6 text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
-                Writings & Blogs
-              </h2>
-              <p className="w-full text-lg leading-relaxed text-gray-600 dark:text-gray-400">
-                I host my thoughts on{" "}
-                <a
-                  href="https://medium.com/@adityapatil24680"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-black dark:text-white underline underline-offset-4 transition-colors hover:text-gray-600 dark:hover:text-gray-300"
-                >
-                  Medium
-                </a>{" "}
-                rather than building a custom site. Instead of overengineering and reinventing the wheel, I prefer leveraging a mature platform that lets me focus on what matters: sharing insights on AI systems, product strategy, and technical architecture.
-              </p>
-            </div>
+  <h2 className="mb-6 text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+    Writings & Blogs
+  </h2>
+  <p className="w-full text-lg leading-relaxed text-gray-600 dark:text-gray-400">
+    I share my thoughts, experiences, and learnings on{" "}
+    <a
+      href="https://medium.com/@adityapatil24680"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-black dark:text-white underline underline-offset-4 transition-colors hover:text-gray-600 dark:hover:text-gray-300"
+    >
+      Medium
+    </a>
+    . I prefer using an established platform rather than building a separate website so I can focus on what really matters: discussing technology, AI, full-stack development, and real-world project experiences.
+  </p>
+</div>
 
             {/* Library Section */}
             <div className="mb-16 w-full text-left">
@@ -586,23 +785,69 @@ export default function Home() {
               </h2>
               <div className="space-y-6">
                 <p className="w-full text-lg leading-relaxed text-gray-600 dark:text-gray-400">
-                  Beyond engineering and build systems, I find balance in the tactile and the thoughtful. Whether it&apos;s exploring the nuances of complex architectures or spending time in the real world, my approach to life is driven by curiosity and a desire to understand how things work at their core.
-                </p>
+Outside of technology, I enjoy being active and spending time with my team on the cricket field. 
+This photo captures one of my favorite moments — celebrating a tournament win with my teammates. 
+Cricket has taught me many valuable lessons about teamwork, discipline, and staying focused under pressure.
+</p>
 
-                <div className="flex justify-center">
-                  <div className="relative h-[250px] w-full max-w-sm grayscale hover:grayscale-0 transition-all duration-700 sm:h-[350px]" style={{ maskImage: "radial-gradient(circle, black 40%, transparent 95%)", WebkitMaskImage: "radial-gradient(circle, black 40%, transparent 95%)" }}>
-                    <Image
-                      src="/casual.png"
-                      alt="Casual photo"
-                      fill
-                      className="object-contain object-center"
-                    />
-                  </div>
-                </div>
+               {/* <div className="w-full overflow-hidden py-6"> */}
+
+
+                 <div className="w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+      
+      <div className="flex w-max animate-infinite-scroll">
+
+        {/* First Row */}
+        <div className="flex gap-12 py-6 pr-12">
+          {images.map((img, index) => (
+            <div
+              key={index}
+              className="relative h-[250px] w-[250px] grayscale hover:grayscale-0 transition-all duration-1600 sm:h-[320px] sm:w-[320px]"
+              style={{
+                maskImage: "radial-gradient(circle, black 40%, transparent 95%)",
+                WebkitMaskImage: "radial-gradient(circle, black 40%, transparent 95%)",
+              }}
+            >
+              <Image
+                src={img}
+                alt="Gallery image"
+                fill
+                className="object-contain object-center"
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Duplicate Row (for infinite loop) */}
+        <div className="flex gap-12 py-6 pr-12">
+          {images.map((img, index) => (
+            <div
+              key={index + images.length}
+              className="relative h-[250px] w-[250px] grayscale hover:grayscale-0 transition-all duration-1600 sm:h-[320px] sm:w-[320px]"
+              style={{
+                maskImage: "radial-gradient(circle, black 40%, transparent 95%)",
+                WebkitMaskImage: "radial-gradient(circle, black 40%, transparent 95%)",
+              }}
+            >
+              <Image
+                src={img}
+                alt="Gallery image"
+                fill
+                className="object-contain object-center"
+              />
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </div>
+  
+ 
 
                 <p className="w-full text-lg leading-relaxed text-gray-600 dark:text-gray-400">
-                  I believe that the best products are built by people who have a diverse range of interests. It&apos;s the unique combination of technical depth and human perspective that allows us to create technology that actually resonates.
-                </p>
+Just like in software development, success in sports comes from collaboration, strategy, and trust in the people around you. 
+Whether I'm building projects or playing a match, I always enjoy working together toward a shared goal and celebrating the results.
+</p>
               </div>
             </div>
 
@@ -615,7 +860,7 @@ export default function Home() {
                 <p className="text-lg text-gray-600 dark:text-gray-400">
                   Connect with me on{" "}
                   <a
-                    href="https://www.linkedin.com/in/aditya-patil-260a631b2/"
+                    href="https://www.linkedin.com/in/damindu-abeygunasekara-8193b1282/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-black dark:text-white underline underline-offset-4 hover:text-gray-600 dark:hover:text-gray-300"
@@ -624,7 +869,7 @@ export default function Home() {
                   </a>{" "}
                   or{" "} shoot an {" "}
                   <a
-                    href="mailto:adityapatil24680@gmail.com"
+                    href="mailto:daminduprasadith05@gmail.com"
                     className="text-black dark:text-white underline underline-offset-4 hover:text-gray-600 dark:hover:text-gray-300"
                   >
                     email
@@ -632,10 +877,6 @@ export default function Home() {
                 </p>
               </div>
             </div>
-
-
-
-
           </motion.main>
         )}
       </AnimatePresence>
@@ -645,20 +886,21 @@ export default function Home() {
         {/* Mode Toggle Switch */}
         <div className="flex items-center">
           <button
-            onClick={() => setMode(mode === "human" ? "agent" : "human")}
+            onClick={() => setMode(mode === "profile" ? "projects" : "profile")}
             className="group relative flex h-7 w-12 cursor-pointer rounded-full bg-gray-200 dark:bg-zinc-700 p-1 transition-colors duration-200 ease-in-out hover:bg-gray-300 dark:hover:bg-zinc-600 focus:outline-none"
             role="switch"
-            aria-checked={mode === "agent"}
-            title={`Switch to ${mode === "human" ? "agent" : "human"} mode`}
+            aria-checked={mode === "profile"}
+            title={`Switch to ${mode === "profile" ? "projects" : "profile"} `}
           >
             <div
-              className={`flex h-5 w-5 transform items-center justify-center rounded-full bg-white dark:bg-white shadow-sm transition duration-200 ease-in-out ${mode === "agent" ? "translate-x-5" : "translate-x-0"
-                }`}
+              className={`flex h-5 w-5 transform items-center justify-center rounded-full bg-white dark:bg-white shadow-sm transition duration-200 ease-in-out ${
+                mode === "projects" ? "translate-x-5" : "translate-x-0"
+              }`}
             >
-              {mode === "human" ? (
+              {mode === "profile" ? (
                 <User className="h-3 w-3 text-black" />
               ) : (
-                <Bot className="h-3 w-3 text-black" />
+                <FiShoppingCart className="h-3 w-3 text-black" />
               )}
             </div>
           </button>
@@ -672,7 +914,7 @@ export default function Home() {
         </button>
         <div className="h-6 w-px bg-gray-200 dark:bg-zinc-700" />
         <a
-          href="https://github.com/PythonHacker24"
+          href="https://github.com/daminduAb"
           target="_blank"
           rel="noopener noreferrer"
           className="text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors hover:scale-110"
@@ -680,7 +922,7 @@ export default function Home() {
           <Github className="h-5 w-5" />
         </a>
         <a
-          href="https://www.linkedin.com/in/aditya-patil-260a631b2/"
+          href="https://www.linkedin.com/in/damindu-abeygunasekara-8193b1282/"
           target="_blank"
           rel="noopener noreferrer"
           className="text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors hover:scale-110"
@@ -688,7 +930,7 @@ export default function Home() {
           <Linkedin className="h-5 w-5" />
         </a>
         <a
-          href="https://x.com/firecaffeine"
+          href="https://x.com/DaminduP2001"
           target="_blank"
           rel="noopener noreferrer"
           className="text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors hover:scale-110"
@@ -704,54 +946,194 @@ export default function Home() {
           <Youtube className="h-5 w-5" />
         </a>
         <a
-          href="https://discord.gg/ry4YCJaShK"
+          href="https://discord.com/channels/@me/948819673997262879"
           target="_blank"
           rel="noopener noreferrer"
           className="text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors hover:scale-110"
         >
           <DiscordIcon className="h-5 w-5" />
         </a>
-        <a
-          href="https://cal.com/adi-patil/30min"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors hover:scale-110"
-        >
-          <Calendar className="h-5 w-5" />
-        </a>
       </nav>
 
       {/* QR Code Modal */}
-      {
-        showQR && (
+      {showQR && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/20 dark:bg-white/5 backdrop-blur-sm"
+          onClick={() => setShowQR(false)}
+        >
           <div
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/20 dark:bg-white/5 backdrop-blur-sm"
-            onClick={() => setShowQR(false)}
+            className="relative rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black p-8 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div
-              className="relative rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black p-8 shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
+            <button
+              onClick={() => setShowQR(false)}
+              className="absolute -right-3 -top-3 rounded-full bg-black dark:bg-white p-2 text-white dark:text-black transition-transform hover:scale-110"
+              aria-label="Close"
             >
-              <button
-                onClick={() => setShowQR(false)}
-                className="absolute -right-3 -top-3 rounded-full bg-black dark:bg-white p-2 text-white dark:text-black transition-transform hover:scale-110"
-                aria-label="Close"
-              >
-                <X className="h-4 w-4" />
-              </button>
-              <div className="rounded-lg bg-white p-2">
-                <QRCodeSVG
-                  value="https://www.justaditya.com/"
-                  size={200}
-                  level="H"
-                  includeMargin={false}
-                />
-              </div>
+              <X className="h-4 w-4" />
+            </button>
+            <div className="rounded-lg bg-white p-2">
+              <QRCodeSVG
+                value="https://www.daminduabeygunasekara.com/"
+                size={200}
+              />
             </div>
           </div>
-        )
-      }
-    </div >
+        </div>
+      )}
+
+      {/* Project Details Modal */}
+      <AnimatePresence>
+        {selectedProject && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={() => setSelectedProject(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: 20, opacity: 0 }}
+              transition={{ type: "spring", damping: 20 }}
+              className="relative max-w-4xl w-full max-h-[90vh] overflow-y-auto rounded-2xl bg-white dark:bg-zinc-900 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <motion.button
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setSelectedProject(null)}
+                className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-black/70 transition-colors"
+              >
+                <FiX className="w-5 h-5" />
+              </motion.button>
+
+              {/* Media Section */}
+              <div className={`relative h-80 bg-gradient-to-br ${selectedProject.gradient}`}>
+                {selectedProject.mediaType === "video" ? (
+                  <video
+                   key={selectedProject.mediaUrl}
+                    src={selectedProject.mediaUrl}
+                    poster={selectedProject.thumbnail}
+                    controls
+                    autoPlay
+                    loop
+                    muted
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full">
+                    {selectedProject.images?.map((img, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="flex-1 bg-cover bg-center"
+                        style={{ backgroundImage: `url(${img})` }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Details Section */}
+              <div className="p-8">
+                <motion.h2 
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  className="text-3xl font-bold mb-4 bg-gradient-to-r from-zinc-900 to-zinc-600 dark:from-white dark:to-zinc-400 bg-clip-text text-transparent"
+                >
+                  {selectedProject.title}
+                </motion.h2>
+
+                <motion.p 
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed"
+                >
+                  {selectedProject.fullDesc}
+                </motion.p>
+
+                {/* Tech Stack */}
+                <motion.div 
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="mb-6"
+                >
+                  <h3 className="text-lg font-semibold mb-3">Technologies Used</h3>
+                  <div className="flex flex-wrap gap-3">
+                    {selectedProject.tech.map((tech) => (
+                      <motion.div
+                        key={tech}
+                        whileHover={{ scale: 1.1 }}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-100 dark:bg-zinc-800"
+                      >
+                        <span className="text-xl">{selectedProject.techIcons[tech]}</span>
+                        <span>{tech}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+
+                {/* Stats */}
+                <motion.div 
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="grid grid-cols-3 gap-4 mb-6"
+                >
+                  {Object.entries(selectedProject.stats).map(([key, value]) => (
+                    <div key={key} className="text-center p-4 rounded-lg bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-700">
+                      <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{value}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 capitalize">{key}</div>
+                    </div>
+                  ))}
+                </motion.div>
+
+                {/* Action Buttons */}
+                <motion.div 
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="flex gap-4"
+                >
+                  {selectedProject.links.github && (
+                    <motion.a
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      href={selectedProject.links.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 flex items-center justify-center gap-2 py-3 rounded-lg bg-zinc-900 dark:bg-zinc-700 text-white hover:bg-zinc-800 dark:hover:bg-zinc-600 transition-colors"
+                    >
+                      <FiGithub className="w-5 h-5" />
+                      <span>View Source Code</span>
+                    </motion.a>
+                  )}
+                  {selectedProject.links.demo && (
+                    <motion.a
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      href={selectedProject.links.demo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 flex items-center justify-center gap-2 py-3 rounded-lg bg-zinc-900 dark:bg-zinc-700 text-white hover:bg-zinc-800 dark:hover:bg-zinc-600 transition-colors"
+                    >
+                      <FiExternalLink className="w-5 h-5" />
+                      <span>Live Demo</span>
+                    </motion.a>
+                  )}
+                </motion.div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
-
