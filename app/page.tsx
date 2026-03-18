@@ -140,7 +140,7 @@ export default function Home() {
 
   const toggleLofi = () => {
     if (!lofiRef.current) {
-      lofiRef.current = new Audio("/lofi.mp3");
+      lofiRef.current = new Audio("/trackk.mp3");
       lofiRef.current.loop = true;
       lofiRef.current.volume = lofiVolume;
     }
@@ -161,6 +161,38 @@ export default function Home() {
       delay: Math.random() * 5,
     }));
   }, []);
+
+//cetificates
+    const [selected, setSelected] = useState<any>(null);
+    const certificates = [
+  {
+    title: "AWS Cloud Practitioner",
+    issuer: "Amazon Web Services",
+    image: "/certificates/aws.jpg",
+  },
+  {
+    title: "Blockchain Development",
+    issuer: "Coursera",
+    image: "/certificates/blockchain.jpg",
+  },
+  {
+    title: "AI & Machine Learning",
+    issuer: "Google",
+    image: "/certificates/ai.jpg",
+  },
+  {
+    title: "DevOps Engineering",
+    issuer: "Udemy",
+    image: "/certificates/devops.jpg",
+  },
+  {
+    title: "Cyber Security",
+    issuer: "Cisco",
+    image: "/certificates/cybersecurity.jpg",
+  },
+];
+
+  
 
   // Projects data
   const projectss: Project[] = [
@@ -270,7 +302,7 @@ export default function Home() {
       opacity: 1, 
       y: 0,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         damping: 12,
         stiffness: 100
       }
@@ -526,7 +558,7 @@ export default function Home() {
                 <span className="text-gray-300 dark:text-gray-700">•</span>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-tight text-gray-400">lofi</span>
+                  <span className="text-[10px] font-bold uppercase tracking-tight text-gray-400">fav</span>
                   <button
                     onClick={toggleLofi}
                     className="flex h-5 w-5 items-center justify-center rounded-full transition-all hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-400 hover:text-black dark:hover:text-white"
@@ -714,69 +746,89 @@ export default function Home() {
   </p>
 </div>
 
-            {/* Library Section */}
-            <div className="mb-16 w-full text-left">
-              <h2 className="mb-6 text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
-                Library
-              </h2>
+            <div className="mb-20 w-full">
+      
+      {/* Title */}
+      <h2 className="mb-10 text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+        Certificates
+      </h2>
 
-              {/* Dev Subsection */}
-              <div className="mb-8">
-                <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-600">
-                  Dev
-                </h3>
-                <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-                  {[
-                    { title: "Linux Kernel Development", author: "Robert Love" },
-                    { title: "Hacking: The Art of Exploitation", author: "Jon Erickson" },
-                    { title: "Linux in a Nutshell", author: "Ellen Siever, Stephen Figgins, Robert Love, and Arnold Robbins" },
-                    { title: "Linux Kernel in a Nutshell", author: "Greg Kroah-Hartman" },
-                    { title: "The Art of Electronics", author: "Paul Horowitz and Winfield Hill" },
-                    { title: "Nmap Cookbook", author: "Nicholas Marsh" }
-                  ].map((book) => (
-                    <div key={book.title} className="group flex flex-col gap-1 transition-all">
-                      <span className="text-sm font-medium text-black dark:text-white group-hover:underline underline-offset-4 decoration-gray-200 dark:decoration-gray-800 transition-all">
-                        {book.title}
-                      </span>
-                      <span className="text-xs text-gray-400 dark:text-gray-500">
-                        {book.author}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+      {/* Certificate Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
-              {/* Casual Reads Subsection */}
-              <div className="mb-4">
-                <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-600">
-                  Casual Reads
-                </h3>
-                <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-                  {[
-                    { title: "Hooked: How to Build Habit-Forming Products", author: "Nir Eyal" },
-                    { title: "The Lean Startup", author: "Eric Ries" },
-                    { title: "Zero to One", author: "Peter Thiel" },
-                    { title: "The Almanack of Naval Ravikant", author: "Eric Jorgenson" },
-                    { title: "Deep Work", author: "Cal Newport" },
-                    { title: "The Anthology of Balaji Srinivasan", author: "Eric Jorgenson" }
-                  ].map((book) => (
-                    <div key={book.title} className="group flex flex-col gap-1 transition-all">
-                      <span className="text-sm font-medium text-black dark:text-white group-hover:underline underline-offset-4 decoration-gray-200 dark:decoration-gray-800 transition-all">
-                        {book.title}
-                      </span>
-                      <span className="text-xs text-gray-400 dark:text-gray-500">
-                        {book.author}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Note */}
-              <p className="mt-6 text-xs italic text-gray-400 dark:text-gray-500">
-                *and many more, these are just one of my best reads
-              </p>
+        {certificates.map((cert, index) => (
+          <motion.div
+            key={index}
+            whileHover={{ scale: 1.05, y: -5 }}
+            transition={{ type: "spring", stiffness: 200 }}
+            onClick={() => setSelected(cert)}
+            className="cursor-pointer rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/40 dark:bg-white/5 backdrop-blur-lg p-4 shadow-md hover:shadow-xl transition"
+          >
+            
+            {/* Image */}
+            <div className="overflow-hidden rounded-xl">
+              <img
+                src={cert.image}
+                alt={cert.title}
+                className="h-40 w-full object-cover transition duration-500 hover:scale-110"
+              />
             </div>
+
+            {/* Text */}
+            <div className="mt-4">
+              <h3 className="text-sm font-semibold text-black dark:text-white">
+                {cert.title}
+              </h3>
+              <p className="text-xs text-gray-400">{cert.issuer}</p>
+            </div>
+
+          </motion.div>
+        ))}
+
+      </div>
+
+      {/* Modal */}
+      <AnimatePresence>
+        {selected && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelected(null)}
+          >
+
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 120 }}
+              className="max-w-3xl rounded-2xl bg-white dark:bg-black p-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              
+              <img
+                src={selected.image}
+                alt={selected.title}
+                className="rounded-xl w-full"
+              />
+
+              <div className="mt-4">
+                <h3 className="text-lg font-bold text-black dark:text-white">
+                  {selected.title}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  Issued by {selected.issuer}
+                </p>
+              </div>
+
+            </motion.div>
+
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+    </div>
 
             {/* Thing about me Section */}
             <div className="mb-16 w-full text-left">
